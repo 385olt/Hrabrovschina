@@ -2,9 +2,11 @@ from os import listdir
 from os.path import isfile, join
 import random
 import re
+import pickle
 
 DATA_DIR = 'data'
-ALLOWED_SYMBOLS_REGEX = '[^\w\,\.\!\?\-]'
+ALLOWED_SYMBOLS_REGEX = '[^\w\,\.\!\?\-\:\–]'
+DICTIONARY_FILE = 'dictionary.pickled'
 
 data_files = [f for f in listdir(DATA_DIR) if isfile(join(DATA_DIR, f))]
 
@@ -24,15 +26,12 @@ for data_file in data_files:
                 dictionary[words[i-1]] = list()
             dictionary[words[i-1]].append(words[i])
 
+dictionary_jar = {
+                        'first_words': first_words,
+                        'last_words' : last_words,
+                        'dictionary' : dictionary
+                 }
 
-result = random.choice(first_words)
-last_word = result
-while last_word not in last_words:
-    if last_word in dictionary:
-        last_word = random.choice(dictionary[last_word])
-    else:
-        last_word = random.choice(list(dictionary.keys()))
+pickle.dump(dictionary_jar, open(DICTIONARY_FILE, 'wb'))
 
-    result += " " + last_word
-
-print(result)
+print(' #  Dictionary generated successfuly in ' + DICTIONARY_FILE)
