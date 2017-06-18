@@ -1,20 +1,9 @@
-import random
+import copy
 import pickle
 
-DICTIONARY_FILE = 'dictionary.pickled'
-LAST_RESULT_FILE = 'last_result.pickled'
 REMEMBERED_FILE = 'remembered.pickled'
 
-dictionary_jar = pickle.load(open(DICTIONARY_FILE, 'rb'))
 remembered = pickle.load(open(REMEMBERED_FILE, 'rb'))
-
-first_words = dictionary_jar['first_words']
-last_words  = dictionary_jar['last_words']
-dictionary  = dictionary_jar['dictionary']
-
-result = list()
-
-
 
 def get_indexes(source, target, start_index = 0):
     if target not in source[start_index:]:
@@ -46,23 +35,16 @@ def get_next(lists, found_pos):
                     nexts.append(lists[i][p])
     return nexts
 
-
 found_positions = dict()
 
-last_word = random.choice(first_words)
-result.append(last_word)
-while last_word not in last_words:
-    found_positions = find_pos(remembered, last_word, found_positions)
-    choices = get_next(remembered, found_positions)
-    if last_word in dictionary:
-        choices += dictionary[last_word]
-    else:
-        choices += list(dictionary.keys())
-    last_word = random.choice(choices)
-    result.append(last_word)
+print(remembered[:20])
 
-message = ' '.join(result)
-
-print(message)
-
-pickle.dump(result, open(LAST_RESULT_FILE, 'wb'))
+found_positions = find_pos(remembered, 'постмодернист', found_positions)
+print(found_positions)
+print('nexts: ' + str(get_next(remembered, found_positions)))
+found_positions = find_pos(remembered, 'Ф.', found_positions)
+print(found_positions)
+print('nexts: ' + str(get_next(remembered, found_positions)))
+found_positions = find_pos(remembered, 'Ницше', found_positions)
+print(found_positions)
+print('nexts: ' + str(get_next(remembered, found_positions)))
